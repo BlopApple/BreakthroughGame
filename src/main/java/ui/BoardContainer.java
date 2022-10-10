@@ -15,7 +15,7 @@ public class BoardContainer extends GridPane {
 
     public BoardContainer(Model model) {
         this.model = model;
-        this.boardPane = new BoardPane(model.getBoardSize(), MIN_WIDTH / (model.getBoardSize() + 1));
+        this.boardPane = new BoardPane(model, MIN_WIDTH / (model.getBoardSize() + 1));
 
         this.getChildren().add(boardPane);
         

@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
 public class InputContainer extends VBox {
-    public static final double MIN_WIDTH = 120.0;
-    public static final double MIN_HEIGHT = 180.0;
+    private static final double MIN_WIDTH = 120.0;
+    private static final double MIN_HEIGHT = 180.0;
     private static final double CONTAINER_INSET_VALUE = 20.0;
     private static final double CONTAINER_SPACING_VALUE = 5.0;
     
