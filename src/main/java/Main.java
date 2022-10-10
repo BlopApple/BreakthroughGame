@@ -1,5 +1,10 @@
+import javafx.application.Application;
+
+/**
+ * Driver class to launch the main application
+ */
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Application.launch(MainApp.class, args);
     }
 }
