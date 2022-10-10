@@ -13,8 +13,12 @@ public class ModelManager implements Model {
         this.isBlackTurn = true;
         this.sourcePosition = new Position();
         this.targetPosition = new Position();
-        
+    }
+
+    @Override
+    public void initializeBoard() {
         this.board.initialize();
+        this.isBlackTurn = true;
     }
 
     @Override

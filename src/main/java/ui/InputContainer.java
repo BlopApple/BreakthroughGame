@@ -1,5 +1,6 @@
 package ui;
 
+import model.Model;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,11 +12,21 @@ public class InputContainer extends VBox {
     private static final double CONTAINER_INSET_VALUE = 20.0;
     private static final double CONTAINER_SPACING_VALUE = 5.0;
     
+    private final Button newGameButton;
+    private final Button undoMoveButton;
+    private final Button redoMoveButton;
+    private final Button saveGameButton;
+    private final Button loadGameButton;
+
     public InputContainer() {
-        for (int i = 0; i < 5; i++) {
-            this.getChildren().add(new Button("Dummy"));
-        }
+        this.newGameButton = new Button("New Game");
+        this.undoMoveButton = new Button("Undo");
+        this.redoMoveButton = new Button("Redo");
+        this.saveGameButton = new Button("Save Game");
+        this.loadGameButton = new Button("Load Game");
         
+        this.getChildren().addAll(newGameButton, undoMoveButton, redoMoveButton, saveGameButton, loadGameButton);
+
         this.setAlignment(Pos.TOP_CENTER);
         this.setMinWidth(MIN_WIDTH);
         this.setMinHeight(MIN_HEIGHT);
@@ -23,5 +34,12 @@ public class InputContainer extends VBox {
         this.setMaxHeight(MIN_HEIGHT);
         this.setPadding(new Insets(CONTAINER_INSET_VALUE));
         this.setSpacing(CONTAINER_SPACING_VALUE);
+    }
+
+    public void initializeEventHandlers(Model model, BoardContainer boardContainer) {
+        this.newGameButton.setOnMouseClicked((event) -> {
+            model.initializeBoard();
+            boardContainer.initialize();
+        });
     }
 }

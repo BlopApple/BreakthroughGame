@@ -3,6 +3,7 @@ package model;
 import ui.BoardPane;
 
 public interface Model {
+    public void initializeBoard();
     public int getBoardSize();
     public char getPiece(int col, int row);
     public char getTurn();

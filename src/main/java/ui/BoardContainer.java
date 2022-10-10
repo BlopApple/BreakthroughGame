@@ -25,4 +25,8 @@ public class BoardContainer extends GridPane {
         this.setMaxHeight(MIN_HEIGHT);
         this.setPadding(new Insets(CONTAINER_INSET_VALUE, 0.0, 0.0, 0.0));
     }
+
+    public void initialize() {
+        this.boardPane.refreshGrid();
+    }
 }

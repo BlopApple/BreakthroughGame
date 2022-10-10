@@ -28,4 +28,9 @@ public class Position {
     public int getRow() {
         return this.row;
     }
+
+    @Override
+    public String toString() {
+        return "(" + this.row + "," + this.col + ")";
+    }
 }

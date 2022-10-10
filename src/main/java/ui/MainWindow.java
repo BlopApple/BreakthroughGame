@@ -32,4 +32,10 @@ public class MainWindow extends GridPane {
         this.addColumn(0, boardContainer);
         this.addColumn(1, sideBar);
     }
+
+    public void initialize() {
+        this.model.initializeBoard();
+        this.inputContainer.initializeEventHandlers(this.model, this.boardContainer);
+        this.boardContainer.initialize();
+    }
 }
