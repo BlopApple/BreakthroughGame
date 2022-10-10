@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class InputContainer extends VBox {
     private static final double MIN_WIDTH = 120.0;
@@ -36,10 +37,10 @@ public class InputContainer extends VBox {
         this.setSpacing(CONTAINER_SPACING_VALUE);
     }
 
-    public void initializeEventHandlers(Model model, BoardContainer boardContainer) {
+    public void initializeEventHandlers(Model model, BoardContainer boardContainer, Stage stage) {
         this.newGameButton.setOnMouseClicked((event) -> {
             model.initializeBoard();
-            boardContainer.initialize();
+            boardContainer.initialize(stage);
         });
     }
 }

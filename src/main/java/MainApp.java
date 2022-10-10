@@ -17,7 +17,6 @@ public class MainApp extends Application {
         // Setting the scene
         MainWindow mainWindow = new MainWindow(new ModelManager(BOARD_SIZE));
         mainWindow.setMinSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT);
-        mainWindow.initialize();
 
         stage.setTitle("Breakthrough Game");
         stage.setResizable(false);
@@ -26,5 +25,7 @@ public class MainApp extends Application {
 
         stage.setScene(new Scene(mainWindow));
         stage.show();
+
+        mainWindow.initialize(stage);
     }
 }

@@ -60,4 +60,13 @@ public class Board {
         setPiece(sourcePosition, '-');
         setPiece(targetPosition, tempPiece);
     }
+
+    public boolean isGameEnd() {
+        for (int col = 0; col < this.boardSize; col++) {
+            if (this.internalBoard[0][col] == 'W' || this.internalBoard[this.boardSize - 1][col] == 'B') {
+                return true;
+            }
+        }
+        return false;
+    }
 }

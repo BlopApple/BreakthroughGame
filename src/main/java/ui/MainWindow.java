@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 /**
  * MainWindow is a GridPane that contains various containers for the main application.
  */
@@ -33,9 +34,9 @@ public class MainWindow extends GridPane {
         this.addColumn(1, sideBar);
     }
 
-    public void initialize() {
+    public void initialize(Stage stage) {
         this.model.initializeBoard();
-        this.inputContainer.initializeEventHandlers(this.model, this.boardContainer);
-        this.boardContainer.initialize();
+        this.inputContainer.initializeEventHandlers(this.model, this.boardContainer, stage);
+        this.boardContainer.initialize(stage);
     }
 }

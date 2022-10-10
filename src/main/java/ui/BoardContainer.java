@@ -3,6 +3,7 @@ package ui;
 import model.Model;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 public class BoardContainer extends GridPane {
     private static final double MIN_WIDTH = 420.0;
@@ -26,7 +27,8 @@ public class BoardContainer extends GridPane {
         this.setPadding(new Insets(CONTAINER_INSET_VALUE, 0.0, 0.0, 0.0));
     }
 
-    public void initialize() {
+    public void initialize(Stage stage) {
+        this.boardPane.setStage(stage);
         this.boardPane.refreshGrid();
     }
 }

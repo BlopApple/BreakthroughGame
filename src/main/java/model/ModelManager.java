@@ -37,6 +37,11 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public boolean isGameEnd() {
+        return this.board.isGameEnd();
+    }
+
+    @Override
     public boolean hasMoveEvent() {
         return !(this.sourcePosition.isEmpty());
     }
@@ -53,6 +58,7 @@ public class ModelManager implements Model {
             if (this.board.checkValidMove(this.isBlackTurn, sourcePosition, targetPosition)) {
                 this.board.makeMove(sourcePosition, targetPosition);
                 this.isBlackTurn = !this.isBlackTurn;
+                
                 boardPane.refreshGrid();
             } else {
                 this.sourcePosition = new Position();
