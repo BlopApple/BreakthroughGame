@@ -1,5 +1,6 @@
 package model;
 
+import storage.Storage;
 import ui.BoardPane;
 import java.util.Stack;
 
@@ -12,6 +13,8 @@ public class ModelManager implements Model {
     private Position sourcePosition;
     private Position targetPosition;
 
+    private Storage storage;
+
     public ModelManager(int boardSize) {
         this.board = new Board(boardSize);
         this.isBlackTurn = true;
@@ -20,13 +23,15 @@ public class ModelManager implements Model {
 
         this.boardStates = new Stack<>();
         this.undoneBoardStates = new Stack<>();
+
+        this.storage = new Storage(this);
     }
 
     @Override
     public void initializeBoard() {
         this.board.initialize();
         this.isBlackTurn = true;
-        
+
         this.boardStates.clear();
         this.undoneBoardStates.clear();
     }
@@ -106,6 +111,34 @@ public class ModelManager implements Model {
             this.sourcePosition = new Position();
             this.targetPosition = new Position();
 
+            boardPane.refreshGrid();
+        }
+    }
+
+    @Override
+    public Storage getStorage() {
+        return this.storage;
+    }
+
+    @Override
+    public Stack<BoardState> getBoardStates() {
+        Stack<BoardState> newBoardStates = new Stack<>();
+        newBoardStates.addAll(this.boardStates);
+        newBoardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, new Position(), new Position()));
+        return newBoardStates;
+    }
+
+    @Override
+    public void loadBoardStates(Stack<BoardState> newBoardStates, BoardPane boardPane) {
+        if (newBoardStates.size() > 0) {
+            BoardState currentBoardState = newBoardStates.pop();
+
+            this.board = currentBoardState.getBoard().copy();
+            this.isBlackTurn = currentBoardState.getTurn();
+            this.sourcePosition = new Position();
+            this.targetPosition = new Position();
+
+            this.boardStates.addAll(newBoardStates);
             boardPane.refreshGrid();
         }
     }

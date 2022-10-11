@@ -50,5 +50,13 @@ public class InputContainer extends VBox {
         this.redoMoveButton.setOnMouseClicked((event) -> {
             model.redoMove(boardContainer.getBoardPane());
         });
+
+        this.saveGameButton.setOnMouseClicked((event) -> {
+            model.getStorage().saveGame();
+        });
+
+        this.loadGameButton.setOnMouseClicked((event) -> {
+            model.getStorage().loadGame(boardContainer.getBoardPane());
+        });
     }
 }

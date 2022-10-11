@@ -17,6 +17,14 @@ public class Position {
         this.isEmpty = false;
     }
 
+    public Position(String positionString) throws Exception {
+        positionString = positionString.substring(1, positionString.length() - 1);
+        String[] positionValues = positionString.split(",");
+        this.row = Integer.parseInt(positionValues[0]);
+        this.col = Integer.parseInt(positionValues[1]);
+        this.isEmpty = ((this.row == -1) && (this.col == -1));
+    }
+
     public boolean isEmpty() {
         return this.isEmpty;
     }

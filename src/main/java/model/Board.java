@@ -8,6 +8,17 @@ public class Board {
         this.boardSize = boardSize;
         this.internalBoard = new char[boardSize][boardSize];
     }
+
+    public Board(int boardSize, String boardString) {
+        this.boardSize = boardSize;
+        this.internalBoard = new char[boardSize][boardSize];
+        
+        for (int row = 0; row < this.boardSize; row ++) {
+            for (int col = 0; col < this.boardSize; col++) {
+                this.internalBoard[row][col] = boardString.charAt(row * boardSize + col);
+            }
+        }
+    }
     
     private Board(Board board) {
         this.boardSize = board.boardSize;
@@ -83,5 +94,17 @@ public class Board {
             }
         }
         return false;
+    }
+
+    public String getFormattedString() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(String.valueOf(this.boardSize)).append("#");
+        for (int row = 0; row < this.boardSize; row ++) {
+            for (int col = 0; col < this.boardSize; col++) {
+                stringBuilder.append(String.valueOf(this.internalBoard[row][col]));
+            }
+        }
+        return stringBuilder.toString();
     }
 }

@@ -1,6 +1,8 @@
 package model;
 
+import storage.Storage;
 import ui.BoardPane;
+import java.util.Stack;
 
 public interface Model {
     public void initializeBoard();
@@ -14,4 +16,8 @@ public interface Model {
 
     public void undoMove(BoardPane boardPane);
     public void redoMove(BoardPane boardPane);
+
+    public Storage getStorage();
+    public Stack<BoardState> getBoardStates();
+    public void loadBoardStates(Stack<BoardState> newBoardStates, BoardPane boardPane);
 }
