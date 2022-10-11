@@ -4,9 +4,13 @@ import storage.Storage;
 import ui.BoardPane;
 import java.util.Stack;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class ModelManager implements Model {
     private final Stack<BoardState> boardStates;
     private final Stack<BoardState> undoneBoardStates;
+    private final ObservableList<MovementPair> movementPairList;
 
     private Board board;
     private boolean isBlackTurn;
@@ -23,6 +27,7 @@ public class ModelManager implements Model {
 
         this.boardStates = new Stack<>();
         this.undoneBoardStates = new Stack<>();
+        this.movementPairList = FXCollections.observableArrayList();
 
         this.storage = new Storage(this);
     }
@@ -34,6 +39,7 @@ public class ModelManager implements Model {
 
         this.boardStates.clear();
         this.undoneBoardStates.clear();
+        this.movementPairList.clear();
     }
 
     @Override
@@ -70,11 +76,17 @@ public class ModelManager implements Model {
     public void addIdleEvent(int col, int row, BoardPane boardPane) {
         if (!this.sourcePosition.isEmpty()) {
             this.targetPosition = new Position(col, row);
-            if (this.board.checkValidMove(this.isBlackTurn, sourcePosition, targetPosition)) {
-                this.boardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+            if (this.board.checkValidMove(this.isBlackTurn, this.sourcePosition, this.targetPosition)) {
+                this.boardStates.push(new BoardState(this.board, this.isBlackTurn, this.sourcePosition, this.targetPosition));
                 this.undoneBoardStates.clear();
+                if (this.isBlackTurn) {
+                    this.movementPairList.add(new MovementPair(new Movement(this.sourcePosition, this.targetPosition), new Movement()));
+                } else {
+                    MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
+                    this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement(this.sourcePosition, this.targetPosition)));
+                }
 
-                this.board.makeMove(sourcePosition, targetPosition);
+                this.board.makeMove(this.sourcePosition, this.targetPosition);
                 this.isBlackTurn = !this.isBlackTurn;
 
                 boardPane.refreshGrid();
@@ -96,6 +108,13 @@ public class ModelManager implements Model {
             this.sourcePosition = new Position();
             this.targetPosition = new Position();
 
+            if (this.isBlackTurn) {
+                this.movementPairList.remove(this.movementPairList.size() - 1);
+            } else {
+                MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
+                this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement()));
+            }
+
             boardPane.refreshGrid();
         }
     }
@@ -105,6 +124,13 @@ public class ModelManager implements Model {
         if (this.undoneBoardStates.size() > 0) {
             BoardState currentBoardState = this.undoneBoardStates.pop();
             this.boardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+            
+            if (!this.isBlackTurn) {
+                this.movementPairList.add(new MovementPair(new Movement(this.sourcePosition, this.targetPosition), new Movement()));
+            } else {
+                MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
+                this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement(this.sourcePosition, this.targetPosition)));
+            }
 
             this.board = currentBoardState.getBoard().copy();
             this.isBlackTurn = currentBoardState.getTurn();
@@ -141,5 +167,10 @@ public class ModelManager implements Model {
             this.boardStates.addAll(newBoardStates);
             boardPane.refreshGrid();
         }
+    }
+
+    @Override
+    public ObservableList<MovementPair> getMovementPairList() {
+        return this.movementPairList;
     }
 }

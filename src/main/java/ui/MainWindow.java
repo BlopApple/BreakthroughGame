@@ -38,6 +38,5 @@ public class MainWindow extends GridPane {
         this.model.initializeBoard();
         this.inputContainer.initializeEventHandlers(this.model, this.boardContainer, stage);
         this.boardContainer.initialize(stage);
-        this.historyTableContainer.initialize();
     }
 }

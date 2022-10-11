@@ -18,8 +18,8 @@ public class BoardState {
     public BoardState(Board board, boolean isBlackTurn, Position sourcePosition, Position targetPosition) {
         this.board = board.copy();
         this.isBlackTurn = isBlackTurn;
-        this.sourcePosition = sourcePosition;
-        this.targetPosition = targetPosition;
+        this.sourcePosition = new Position(sourcePosition);
+        this.targetPosition = new Position(targetPosition);
     }
 
     public Board getBoard() {
@@ -31,11 +31,11 @@ public class BoardState {
     }
 
     public Position getSourcePosition() {
-        return this.sourcePosition;
+        return new Position(this.sourcePosition);
     }
 
     public Position getTargetPosition() {
-        return this.targetPosition;
+        return new Position(this.targetPosition);
     }
 
     public String getFormattedString() {

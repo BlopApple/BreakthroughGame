@@ -3,6 +3,7 @@ package model;
 import storage.Storage;
 import ui.BoardPane;
 import java.util.Stack;
+import javafx.collections.ObservableList;
 
 public interface Model {
     public void initializeBoard();
@@ -20,4 +21,6 @@ public interface Model {
     public Storage getStorage();
     public Stack<BoardState> getBoardStates();
     public void loadBoardStates(Stack<BoardState> newBoardStates, BoardPane boardPane);
+
+    public ObservableList<MovementPair> getMovementPairList();
 }

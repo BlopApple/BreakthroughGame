@@ -25,6 +25,12 @@ public class Position {
         this.isEmpty = ((this.row == -1) && (this.col == -1));
     }
 
+    public Position(Position position) {
+        this.col = position.getColumn();
+        this.row = position.getRow();
+        this.isEmpty = ((this.row == -1) && (this.col == -1));
+    }
+
     public boolean isEmpty() {
         return this.isEmpty;
     }
