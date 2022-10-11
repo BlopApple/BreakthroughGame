@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
     private static final int BOARD_SIZE = 6;
 
-    private static final double WINDOW_MIN_WIDTH = 560.0;
+    private static final double WINDOW_MIN_WIDTH = 600.0;
     private static final double WINDOW_MIN_HEIGHT = 440.0;
     private static final double STAGE_WIDTH_OFFSET = 15.0;
     private static final double STAGE_HEIGHT_OFFSET = 60.0;

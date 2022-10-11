@@ -22,7 +22,7 @@ public class MainWindow extends GridPane {
         this.model = model;
         this.boardContainer = new BoardContainer(model);
         this.inputContainer = new InputContainer();
-        this.historyTableContainer = new HistoryTableContainer();
+        this.historyTableContainer = new HistoryTableContainer(model);
 
         VBox sideBar = new VBox();
         sideBar.setAlignment(Pos.TOP_CENTER);
@@ -38,5 +38,6 @@ public class MainWindow extends GridPane {
         this.model.initializeBoard();
         this.inputContainer.initializeEventHandlers(this.model, this.boardContainer, stage);
         this.boardContainer.initialize(stage);
+        this.historyTableContainer.initialize();
     }
 }
