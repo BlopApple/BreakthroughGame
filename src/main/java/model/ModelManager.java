@@ -70,6 +70,7 @@ public class ModelManager implements Model {
     @Override
     public void addMoveEvent(int col, int row) {
         this.sourcePosition = new Position(col, row);
+        this.undoneBoardStates.clear();
     }
 
     @Override
@@ -101,7 +102,7 @@ public class ModelManager implements Model {
     public void undoMove(BoardPane boardPane) {
         if (this.boardStates.size() > 0) {
             BoardState currentBoardState = this.boardStates.pop();
-            this.undoneBoardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+            this.undoneBoardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, currentBoardState.getSourcePosition(), currentBoardState.getTargetPosition()));
 
             this.board = currentBoardState.getBoard().copy();
             this.isBlackTurn = currentBoardState.getTurn();
@@ -125,17 +126,17 @@ public class ModelManager implements Model {
             BoardState currentBoardState = this.undoneBoardStates.pop();
             this.boardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
             
+            this.board = currentBoardState.getBoard().copy();
+            this.isBlackTurn = currentBoardState.getTurn();
+            this.sourcePosition = currentBoardState.getSourcePosition();
+            this.targetPosition = currentBoardState.getTargetPosition();
+
             if (!this.isBlackTurn) {
                 this.movementPairList.add(new MovementPair(new Movement(this.sourcePosition, this.targetPosition), new Movement()));
             } else {
                 MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
                 this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement(this.sourcePosition, this.targetPosition)));
             }
-
-            this.board = currentBoardState.getBoard().copy();
-            this.isBlackTurn = currentBoardState.getTurn();
-            this.sourcePosition = new Position();
-            this.targetPosition = new Position();
 
             boardPane.refreshGrid();
         }
@@ -165,6 +166,19 @@ public class ModelManager implements Model {
             this.targetPosition = new Position();
 
             this.boardStates.addAll(newBoardStates);
+            Stack<BoardState> flippedStack = new Stack<>();
+            while (newBoardStates.size() != 0) {
+                flippedStack.push(newBoardStates.pop());
+            }
+            while (flippedStack.size() != 0) {
+                BoardState tempBoardState = flippedStack.pop();
+                if (tempBoardState.getTurn()) {
+                    this.movementPairList.add(new MovementPair(new Movement(tempBoardState.getSourcePosition(), tempBoardState.getTargetPosition()), new Movement()));
+                } else {
+                    MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
+                    this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement(tempBoardState.getSourcePosition(), tempBoardState.getTargetPosition())));
+                }
+            }
             boardPane.refreshGrid();
         }
     }
