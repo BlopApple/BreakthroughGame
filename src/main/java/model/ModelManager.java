@@ -1,9 +1,13 @@
 package model;
 
 import ui.BoardPane;
+import java.util.Stack;
 
 public class ModelManager implements Model {
-    private final Board board;
+    private final Stack<BoardState> boardStates;
+    private final Stack<BoardState> undoneBoardStates;
+
+    private Board board;
     private boolean isBlackTurn;
     private Position sourcePosition;
     private Position targetPosition;
@@ -13,12 +17,18 @@ public class ModelManager implements Model {
         this.isBlackTurn = true;
         this.sourcePosition = new Position();
         this.targetPosition = new Position();
+
+        this.boardStates = new Stack<>();
+        this.undoneBoardStates = new Stack<>();
     }
 
     @Override
     public void initializeBoard() {
         this.board.initialize();
         this.isBlackTurn = true;
+        
+        this.boardStates.clear();
+        this.undoneBoardStates.clear();
     }
 
     @Override
@@ -56,14 +66,47 @@ public class ModelManager implements Model {
         if (!this.sourcePosition.isEmpty()) {
             this.targetPosition = new Position(col, row);
             if (this.board.checkValidMove(this.isBlackTurn, sourcePosition, targetPosition)) {
+                this.boardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+                this.undoneBoardStates.clear();
+
                 this.board.makeMove(sourcePosition, targetPosition);
                 this.isBlackTurn = !this.isBlackTurn;
-                
+
                 boardPane.refreshGrid();
             } else {
                 this.sourcePosition = new Position();
                 this.targetPosition = new Position();
             }
+        }
+    }
+
+    @Override
+    public void undoMove(BoardPane boardPane) {
+        if (this.boardStates.size() > 0) {
+            BoardState currentBoardState = this.boardStates.pop();
+            this.undoneBoardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+
+            this.board = currentBoardState.getBoard().copy();
+            this.isBlackTurn = currentBoardState.getTurn();
+            this.sourcePosition = new Position();
+            this.targetPosition = new Position();
+
+            boardPane.refreshGrid();
+        }
+    }
+
+    @Override
+    public void redoMove(BoardPane boardPane) {
+        if (this.undoneBoardStates.size() > 0) {
+            BoardState currentBoardState = this.undoneBoardStates.pop();
+            this.boardStates.push(new BoardState(this.board.copy(), this.isBlackTurn, this.sourcePosition, this.targetPosition));
+
+            this.board = currentBoardState.getBoard().copy();
+            this.isBlackTurn = currentBoardState.getTurn();
+            this.sourcePosition = new Position();
+            this.targetPosition = new Position();
+
+            boardPane.refreshGrid();
         }
     }
 }

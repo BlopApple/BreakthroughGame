@@ -11,4 +11,7 @@ public interface Model {
     public boolean hasMoveEvent();
     public void addMoveEvent(int col, int row);
     public void addIdleEvent(int col, int row, BoardPane boardPane);
+
+    public void undoMove(BoardPane boardPane);
+    public void redoMove(BoardPane boardPane);
 }

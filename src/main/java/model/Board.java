@@ -8,6 +8,17 @@ public class Board {
         this.boardSize = boardSize;
         this.internalBoard = new char[boardSize][boardSize];
     }
+    
+    private Board(Board board) {
+        this.boardSize = board.boardSize;
+        this.internalBoard = new char[board.boardSize][board.boardSize];
+
+        for (int row = 0; row < this.boardSize; row ++) {
+            for (int col = 0; col < this.boardSize; col++) {
+                this.internalBoard[row][col] = board.internalBoard[row][col];
+            }
+        }
+    }
 
     public void initialize() {
         for (int row = 0; row < this.boardSize; row ++) {
@@ -21,6 +32,10 @@ public class Board {
                 }
             }
         }
+    }
+
+    public Board copy() {
+        return new Board(this);
     }
 
     public int getBoardSize() {

@@ -42,5 +42,13 @@ public class InputContainer extends VBox {
             model.initializeBoard();
             boardContainer.initialize(stage);
         });
+
+        this.undoMoveButton.setOnMouseClicked((event) -> {
+            model.undoMove(boardContainer.getBoardPane());
+        });
+
+        this.redoMoveButton.setOnMouseClicked((event) -> {
+            model.redoMove(boardContainer.getBoardPane());
+        });
     }
 }

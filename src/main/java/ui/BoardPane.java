@@ -44,6 +44,8 @@ public class BoardPane extends GridPane {
         int boardSize = model.getBoardSize();
 
         GridPane grid = new GridPane();
+	    Rectangle highlightTile = new Rectangle(this.tileSize, this.tileSize, Color.WHEAT);
+        highlightTile.setOpacity(0.4);
         for (int row = 0; row < boardSize; row++) {
             for (int col = 0; col < boardSize; col++) {
                 Rectangle tile = new Rectangle(this.tileSize, this.tileSize);
@@ -67,7 +69,7 @@ public class BoardPane extends GridPane {
                 }
 
                 if (!this.model.isGameEnd()) {
-                    addEvent(grid, piece, tile, col, row);
+                    addEvent(grid, piece, tile, highlightTile, col, row);
                 }
 
                 if (isPiece) {    
@@ -110,10 +112,7 @@ public class BoardPane extends GridPane {
         return newColumnLabels;
     }
 
-    private void addEvent(GridPane grid, Circle piece, Rectangle tile, int currCol, int currRow) {
-	    Rectangle highlightTile = new Rectangle(this.tileSize, this.tileSize, Color.WHEAT);
-        highlightTile.setOpacity(0.4);
-
+    private void addEvent(GridPane grid, Circle piece, Rectangle tile, Rectangle highlightTile, int currCol, int currRow) {
         if (this.model.getPiece(currCol, currRow) == 'B') {
             if (this.model.getTurn() == 'B') {
                 piece.setOnMouseClicked((event) -> {

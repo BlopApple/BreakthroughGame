@@ -31,4 +31,8 @@ public class BoardContainer extends GridPane {
         this.boardPane.setStage(stage);
         this.boardPane.refreshGrid();
     }
+
+    public BoardPane getBoardPane() {
+        return this.boardPane;
+    }
 }
