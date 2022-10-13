@@ -8,7 +8,7 @@ import javafx.scene.control.TableView;
 
 public class HistoryTableContainer extends TableView<MovementPair> {
     private static final double MIN_WIDTH = 160.0;
-    private static final double MIN_HEIGHT = 280.0;
+    private static final double MIN_HEIGHT = 260.0;
 
 	private TableColumn<MovementPair, String> blackColumn;
 	private TableColumn<MovementPair, String> whiteColumn;

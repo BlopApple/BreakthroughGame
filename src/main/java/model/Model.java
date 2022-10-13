@@ -3,6 +3,8 @@ package model;
 import storage.Storage;
 import ui.BoardPane;
 import java.util.Stack;
+import java.util.function.Supplier;
+
 import javafx.collections.ObservableList;
 
 public interface Model {
@@ -23,4 +25,6 @@ public interface Model {
     public void loadBoardStates(Stack<BoardState> newBoardStates, BoardPane boardPane);
 
     public ObservableList<MovementPair> getMovementPairList();
+
+    public void setToggleButtonSupplier(Supplier<Integer> toggleButtonSupplier);
 }

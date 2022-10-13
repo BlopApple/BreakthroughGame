@@ -3,6 +3,7 @@ package model;
 import storage.Storage;
 import ui.BoardPane;
 import java.util.Stack;
+import java.util.function.Supplier;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +19,9 @@ public class ModelManager implements Model {
     private Position targetPosition;
 
     private Storage storage;
+    private PlayerAi ai;
+
+    private Supplier<Integer> toggleButtonSupplier;
 
     public ModelManager(int boardSize) {
         this.board = new Board(boardSize);
@@ -30,6 +34,9 @@ public class ModelManager implements Model {
         this.movementPairList = FXCollections.observableArrayList();
 
         this.storage = new Storage(this);
+        this.ai = new PlayerAi();
+
+        this.toggleButtonSupplier = (() -> 0);
     }
 
     @Override
@@ -89,13 +96,22 @@ public class ModelManager implements Model {
 
                 this.board.makeMove(this.sourcePosition, this.targetPosition);
                 this.isBlackTurn = !this.isBlackTurn;
-
-                boardPane.refreshGrid();
             } else {
                 this.sourcePosition = new Position();
                 this.targetPosition = new Position();
             }
         }
+
+        if ((!isBlackTurn) && toggleButtonSupplier.get() != 0 && !(this.board.isGameEnd())) {
+            Movement movement = ai.makeMove(isBlackTurn, this.board, toggleButtonSupplier.get());
+
+            Position flippedSourcePosition = movement.getSourcePosition();
+            Position flippedTargetPosition = movement.getTargetPosition();
+            this.sourcePosition = new Position((this.getBoardSize() - 1) - flippedSourcePosition.getColumn(), (this.getBoardSize() - 1) - flippedSourcePosition.getRow());
+            addIdleEvent((this.getBoardSize() - 1) - flippedTargetPosition.getColumn(), (this.getBoardSize() - 1) - flippedTargetPosition.getRow(), boardPane);
+        }
+        
+        boardPane.refreshGrid();
     }
 
     @Override
@@ -114,9 +130,8 @@ public class ModelManager implements Model {
             } else {
                 MovementPair movementPair = this.movementPairList.remove(this.movementPairList.size() - 1);
                 this.movementPairList.add(new MovementPair(movementPair.getBlackMovement(), new Movement()));
-            }
-
-            boardPane.refreshGrid();
+            }        
+            boardPane.refreshGrid();   
         }
     }
 
@@ -186,5 +201,10 @@ public class ModelManager implements Model {
     @Override
     public ObservableList<MovementPair> getMovementPairList() {
         return this.movementPairList;
+    }
+
+    @Override
+    public void setToggleButtonSupplier(Supplier<Integer> toggleButtoSupplier) {
+        this.toggleButtonSupplier = toggleButtoSupplier;
     }
 }

@@ -14,6 +14,10 @@ public class MovementPair {
         this.whiteMovement = new Movement(whitMovement);
     }
 
+    public MovementPair(MovementPair movementPair) {
+        this(movementPair.getBlackMovement(), movementPair.getWhiteMovement());
+    }
+
     public Movement getBlackMovement() {
         return new Movement(this.blackMovement);
     }

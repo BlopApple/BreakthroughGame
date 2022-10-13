@@ -24,6 +24,8 @@ public class MainWindow extends GridPane {
         this.inputContainer = new InputContainer();
         this.historyTableContainer = new HistoryTableContainer(model);
 
+        this.model.setToggleButtonSupplier(() -> this.inputContainer.getToggledButton());
+
         VBox sideBar = new VBox();
         sideBar.setAlignment(Pos.TOP_CENTER);
         sideBar.getChildren().addAll(inputContainer, historyTableContainer);

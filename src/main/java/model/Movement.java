@@ -19,11 +19,11 @@ public class Movement {
         this.targetPosition = movement.getTargetPosition();
     }
 
-    private Position getSourcePosition() {
+    public Position getSourcePosition() {
         return new Position(this.sourcePosition);
     }
 
-    private Position getTargetPosition() {
+    public Position getTargetPosition() {
         return new Position(this.targetPosition);
     }
 
