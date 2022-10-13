@@ -66,7 +66,7 @@ public class Board {
             if (sourcePosition.getColumn() == targetPosition.getColumn()) {
                 return ((targetPosition.getRow() - sourcePosition.getRow()) == 1) && (getPiece(targetPosition) == '-');
             } else if (Math.abs(sourcePosition.getColumn() - targetPosition.getColumn()) == 1) {
-                return ((targetPosition.getRow() - sourcePosition.getRow()) == 1) && (getPiece(targetPosition) == 'W');
+                return ((targetPosition.getRow() - sourcePosition.getRow()) == 1) && (getPiece(targetPosition) != 'B');
             } else {
                 return false;
             }
@@ -74,7 +74,7 @@ public class Board {
             if (sourcePosition.getColumn() == targetPosition.getColumn()) {
                 return ((targetPosition.getRow() - sourcePosition.getRow()) == -1) && (getPiece(targetPosition) == '-');
             } else if (Math.abs(sourcePosition.getColumn() - targetPosition.getColumn()) == 1) {
-                return ((targetPosition.getRow() - sourcePosition.getRow()) == -1) && (getPiece(targetPosition) == 'B');
+                return ((targetPosition.getRow() - sourcePosition.getRow()) == -1) && (getPiece(targetPosition) != 'W');
             } else {
                 return false;
             }

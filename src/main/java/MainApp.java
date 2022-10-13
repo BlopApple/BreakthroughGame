@@ -20,8 +20,10 @@ public class MainApp extends Application {
 
         stage.setTitle("Breakthrough Game");
         stage.setResizable(false);
-        stage.setMinWidth(WINDOW_MIN_WIDTH + STAGE_WIDTH_OFFSET);
-        stage.setMinHeight(WINDOW_MIN_HEIGHT + STAGE_HEIGHT_OFFSET);
+        //stage.setMinWidth(WINDOW_MIN_WIDTH + STAGE_WIDTH_OFFSET);
+        //stage.setMinHeight(WINDOW_MIN_HEIGHT + STAGE_HEIGHT_OFFSET);
+        stage.setMinWidth(WINDOW_MIN_WIDTH);
+        stage.setMinHeight(WINDOW_MIN_HEIGHT);
 
         stage.setScene(new Scene(mainWindow));
         stage.show();
