@@ -5,9 +5,17 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class PlayerAi {
+    private static final int NUM_RULES = 5;
+
     private static final double MAX_VALUE = 1000000.0;
     private static final double MIN_VALUE = -MAX_VALUE;
+
+    private boolean[] rules;
     public PlayerAi() {
+        this.rules = new boolean[NUM_RULES];
+        for (int i = 0; i < this.rules.length; i++) {
+            this.rules[i] = true;
+        }
     }
 
     private int[] compressBoard(boolean isBlackTurn, Board board) {
@@ -37,20 +45,144 @@ public class PlayerAi {
         return compressedBoard;
     }
 
-    private double getUtilityScore(int[] board) {
-        return 0.0;
+    private double getUtilityScore(int[] board, boolean isBlackTurn) {
+        int nRow = 6;
+        int nCol = 6;
+        
+        if (IntStream.range(0, nCol).filter(i -> (board[(nRow - 1) * nCol + i] == 1)).findAny().isPresent()) {
+            return MAX_VALUE;
+        }
+        if (IntStream.range(0, nCol).filter(i -> (board[i] == -1)).findAny().isPresent()) {
+            return MIN_VALUE;
+        }
+
+        int wCount = 0;
+        int bCount = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == 1) {
+                bCount++;
+            } else if (board[i] == -1) {
+                wCount++;
+            }
+        }
+
+        if (wCount == 0) {
+            return MAX_VALUE;
+        }
+        if (bCount == 0) {
+            return MIN_VALUE;
+        }
+
+        double score = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (((board[i] == 1) && isBlackTurn) || ((board[i] == -1)  && !isBlackTurn)) {
+                int ownPiece = 1;
+                int winningRow = (nRow - 1);
+
+                if (!isBlackTurn) {
+                    ownPiece = -1;
+                    winningRow = 0;
+                }
+
+                int spaceForward = i + nCol * ownPiece;
+                int spaceDiagonalLeft = i + nCol * ownPiece - 1;
+                int spaceDiagonalRight = i + nCol * ownPiece + 1;
+                int rowDiff = ownPiece;
+
+                if (this.rules[0]) {
+                    if (isBlackTurn) {
+                        score += (i / nCol);
+                    } else {
+                        score -= ((nCol - 1) - (i / nCol));
+                    }
+                }
+
+                if (this.rules[1]) {
+                    double winningRowScore = 1000.0;
+                    // forward move
+                    if ((spaceForward < board.length && spaceForward >= 0) && (board[spaceForward] == 0)) {
+                        score += 1.0 * ((double) ownPiece);
+                        if (spaceForward / nCol == winningRow) {
+                            score += winningRowScore * ((double) ownPiece);
+                        }
+                    }
+                    // diagonal move left
+                    if ((spaceDiagonalLeft < board.length && spaceDiagonalLeft >= 0) && (board[spaceDiagonalLeft] != ownPiece) && ((spaceDiagonalLeft / nCol) == (i / nCol + rowDiff))) {
+                        score += 1.0 * ((double) ownPiece);
+                        if (spaceDiagonalLeft / nCol == winningRow) {
+                            score += winningRowScore * ((double) ownPiece);
+                        }
+                    }
+                    // diagonal move right
+                    if ((spaceDiagonalRight < board.length && spaceDiagonalRight >= 0) && (board[spaceDiagonalRight] != ownPiece) && ((spaceDiagonalRight / nCol) == (i / nCol + rowDiff))) {
+                        score += 1.0 * ((double) ownPiece);
+                        if (spaceDiagonalRight / nCol == winningRow) {
+                            score += winningRowScore * ((double) ownPiece);
+                        }
+                    }
+                }
+                if (this.rules[2]) {
+                    double captureScore = 10.0;
+                    // diagonal move left
+                    if ((spaceDiagonalLeft < board.length && spaceDiagonalLeft >= 0) && (board[spaceDiagonalLeft] == -ownPiece) && ((spaceDiagonalLeft / nCol) == (i / nCol + rowDiff))) {
+                        score += captureScore * ((double) ownPiece);
+                    }
+                    // diagonal move right
+                    if ((spaceDiagonalRight < board.length && spaceDiagonalRight >= 0) && (board[spaceDiagonalRight] == -ownPiece) && ((spaceDiagonalRight / nCol) == (i / nCol + rowDiff))) {
+                        score += captureScore * ((double) ownPiece);
+                    }
+                }
+
+                if (this.rules[3]) {
+                    double enterCaptureScore = -50.0;
+                    int opponentPieceCount  = 0;
+                    int spaceForwardTwo = i + nCol * ownPiece * 2;
+                    int spaceKnightLeft = i + nCol * ownPiece * 2 - 1;
+                    int spaceKnightRight = i + nCol * ownPiece * 2 + 1;
+
+                    // forward move two
+                    if ((spaceForwardTwo < board.length && spaceForwardTwo >= 0) && (board[spaceForwardTwo] == -ownPiece)) {
+                        opponentPieceCount++;
+                    }
+                    // knight move left
+                    if ((spaceKnightLeft < board.length && spaceKnightLeft >= 0) && (board[spaceKnightLeft] == -ownPiece) && ((spaceKnightLeft / nCol) == (i / nCol + rowDiff * 2))) {
+                        opponentPieceCount++;
+                    }
+                    // knight move right
+                    if ((spaceKnightRight < board.length && spaceKnightRight >= 0) && (board[spaceKnightRight] == -ownPiece) && ((spaceKnightRight / nCol) == (i / nCol + rowDiff * 2))) {
+                        opponentPieceCount++;
+                    }
+
+                    if (opponentPieceCount > 1) {
+                        score += enterCaptureScore * ((double) ownPiece);
+                    }
+                }
+
+                if (this.rules[4]) {
+                    double controlScore = 100.0;
+                    int evenSquareControl = 0;
+                    int oddSquareControl = 0;
+
+                    if (i % 2 == 0) {
+                        evenSquareControl += ownPiece;
+                    } else {
+                        oddSquareControl += ownPiece;
+                    }
+
+                    score += controlScore * ((double) (evenSquareControl + oddSquareControl) * ownPiece);
+                }
+            }
+        }
+        return score;
     }
 
     private ScoreMovementPair maxAlphaBeta(int depth, Node node, double alpha, double beta) {
         if (node.isTerminal() || depth == 0) {
-            return new ScoreMovementPair(getUtilityScore(node.getBoard()), node.getMovement());
+            return new ScoreMovementPair(getUtilityScore(node.getBoard(), true), node.getMovement());
         } else {
             List<Node> children = node.getChildren(true);
             double currentScore = MIN_VALUE;
             Movement currentMove = children.get(0).getMovement();
-            
-            System.out.println("in max: " + currentMove);
-
             for (Node childNode : children) {
                 ScoreMovementPair scoreMovementPair = minAlphaBeta(depth - 1, childNode, alpha, beta);
                 double childScore = scoreMovementPair.getScore();
@@ -73,7 +205,7 @@ public class PlayerAi {
 
     private ScoreMovementPair minAlphaBeta(int depth, Node node, double alpha, double beta) {
         if (node.isTerminal() || depth == 0) {
-            return new ScoreMovementPair(getUtilityScore(node.getBoard()), node.getMovement());
+            return new ScoreMovementPair(getUtilityScore(node.getBoard(), false), node.getMovement());
         } else {
             List<Node> children = node.getChildren(false);
             double currentScore = MAX_VALUE;

@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class InputContainer extends GridPane {
+    private static final int DEPTH_LIMIT = 6;
+
     private static final double MIN_WIDTH = 160.0;
     private static final double MIN_HEIGHT = 200.0;
     private static final double CONTAINER_INSET_VALUE = 20.0;
@@ -42,7 +44,7 @@ public class InputContainer extends GridPane {
         VBox radioButtonBox = new VBox();
         radioButtonBox.setAlignment(Pos.TOP_CENTER);
         radioButtonBox.getChildren().add(new Label("Depth"));
-        for (int i = 0; i <= 8; i++) {
+        for (int i = 0; i <= DEPTH_LIMIT; i++) {
             RadioButton radioButton = new RadioButton(String.valueOf(i));
             radioButton.setToggleGroup(this.toggleGroup);
             radioButtonBox.getChildren().add(radioButton);
