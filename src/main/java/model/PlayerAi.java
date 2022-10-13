@@ -74,6 +74,9 @@ public class PlayerAi {
         }
 
         double score = 0;
+
+        int evenSquareControl = 0;
+        int oddSquareControl = 0;
         for (int i = 0; i < board.length; i++) {
             if ((board[i] == 1) || (board[i] == -1)) {
                 int ownPiece = 1;
@@ -84,13 +87,13 @@ public class PlayerAi {
                     winningRow = 0;
                 }
 
-                int spaceForward = i + nCol * ownPiece;
-                int spaceDiagonalLeft = i + nCol * ownPiece - 1;
-                int spaceDiagonalRight = i + nCol * ownPiece + 1;
-                int rowDiff = ownPiece;
+                int spaceForward = i + nCol * board[i];
+                int spaceDiagonalLeft = i + nCol * board[i] - 1;
+                int spaceDiagonalRight = i + nCol * board[i] + 1;
+                int rowDiff = board[i];
 
                 if (this.rules[0]) {
-                    if (isBlackTurn) {
+                    if (board[i] == ownPiece) {
                         score += (i / nCol) * (i / nCol);
                     } else {
                         score -= ((nCol - 1) - (i / nCol)) * ((nCol - 1) - (i / nCol));
@@ -102,23 +105,23 @@ public class PlayerAi {
                     double winningRowScore = 50000.0;
                     // forward move
                     if ((spaceForward < board.length && spaceForward >= 0) && (board[spaceForward] == 0)) {
-                        score += potentialMoveScore * ((double) ownPiece);
+                        score += potentialMoveScore * ((double) ownPiece * board[i]);
                         if (spaceForward / nCol == winningRow) {
-                            score += winningRowScore * ((double) ownPiece);
+                            score += winningRowScore * ((double) ownPiece * board[i]);
                         }
                     }
                     // diagonal move left
                     if ((spaceDiagonalLeft < board.length && spaceDiagonalLeft >= 0) && (board[spaceDiagonalLeft] != ownPiece) && ((spaceDiagonalLeft / nCol) == (i / nCol + rowDiff))) {
-                        score += potentialMoveScore * ((double) ownPiece);
+                        score += potentialMoveScore * ((double) ownPiece * board[i]);
                         if (spaceDiagonalLeft / nCol == winningRow) {
-                            score += winningRowScore * ((double) ownPiece);
+                            score += winningRowScore * ((double) ownPiece * board[i]);
                         }
                     }
                     // diagonal move right
                     if ((spaceDiagonalRight < board.length && spaceDiagonalRight >= 0) && (board[spaceDiagonalRight] != ownPiece) && ((spaceDiagonalRight / nCol) == (i / nCol + rowDiff))) {
-                        score += potentialMoveScore * ((double) ownPiece);
+                        score += potentialMoveScore * ((double) ownPiece * board[i]);
                         if (spaceDiagonalRight / nCol == winningRow) {
-                            score += winningRowScore * ((double) ownPiece);
+                            score += winningRowScore * ((double) ownPiece * board[i]);
                         }
                     }
                 }
@@ -126,20 +129,20 @@ public class PlayerAi {
                     double captureScore = 20.0;
                     // diagonal move left
                     if ((spaceDiagonalLeft < board.length && spaceDiagonalLeft >= 0) && (board[spaceDiagonalLeft] == -ownPiece) && ((spaceDiagonalLeft / nCol) == (i / nCol + rowDiff))) {
-                        score += captureScore * ((double) ownPiece);
+                        score += captureScore * ((double) ownPiece * board[i]);
                     }
                     // diagonal move right
                     if ((spaceDiagonalRight < board.length && spaceDiagonalRight >= 0) && (board[spaceDiagonalRight] == -ownPiece) && ((spaceDiagonalRight / nCol) == (i / nCol + rowDiff))) {
-                        score += captureScore * ((double) ownPiece);
+                        score += captureScore * ((double) ownPiece * board[i]);
                     }
                 }
 
                 if (this.rules[3]) {
                     double enterCaptureScore = -50.0;
                     int opponentPieceCount  = 0;
-                    int spaceForwardTwo = i + nCol * ownPiece * 2;
-                    int spaceKnightLeft = i + nCol * ownPiece * 2 - 1;
-                    int spaceKnightRight = i + nCol * ownPiece * 2 + 1;
+                    int spaceForwardTwo = i + nCol * board[i] * 2;
+                    int spaceKnightLeft = i + nCol * board[i] * 2 - 1;
+                    int spaceKnightRight = i + nCol * board[i] * 2 + 1;
 
                     // forward move two
                     if ((spaceForwardTwo < board.length && spaceForwardTwo >= 0) && (board[spaceForwardTwo] == -ownPiece)) {
@@ -155,31 +158,35 @@ public class PlayerAi {
                     }
 
                     if (opponentPieceCount > 1) {
-                        score += enterCaptureScore * ((double) ownPiece);
+                        score += enterCaptureScore * ((double) ownPiece * board[i]);
                     }
                 }
 
                 if (this.rules[4]) {
-                    double controlScore = -200.0;
-                    int evenSquareControl = 0;
-                    int oddSquareControl = 0;
-
                     if (i % 2 == 0) {
-                        evenSquareControl += ownPiece;
+                        evenSquareControl += board[i];
                     } else {
-                        oddSquareControl += ownPiece;
+                        oddSquareControl += board[i];
                     }
-                    score += controlScore * ((double) (evenSquareControl + oddSquareControl) * ownPiece);
                 }
 
                 if (this.rules[5]) {
                     double stackedPieceScore = 1000.0;
                     if ((spaceForward < board.length && spaceForward >= 0)) {
-                        if (board[spaceForward] == ownPiece) {
-                            score += stackedPieceScore * ((double) ownPiece);
+                        if (board[spaceForward] == board[i]) {
+                            score += stackedPieceScore * ((double) ownPiece * board[i]);
                         }
                     }
                 }
+            }
+        }
+
+        if (this.rules[4]) {
+            double controlScore = 200.0;
+            if (isBlackTurn) {
+                score += controlScore * ((double) (evenSquareControl + oddSquareControl));
+            } else {
+                score -= controlScore * ((double) (evenSquareControl + oddSquareControl));
             }
         }
         return score;
